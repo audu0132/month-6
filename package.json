@@ -1,0 +1,37 @@
+{
+  "name": "enterprise-microservices-platform",
+  "version": "1.0.0",
+  "description": "Enterprise-ready full-stack microservices e-commerce & order platform with high availability, API gateway, advanced security, and Kubernetes orchestration.",
+  "author": "Enterprise Engineering Team",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "services/*",
+    "frontend"
+  ],
+  "scripts": {
+    "start": "docker compose up --build",
+    "start:local": "npm run start --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:coverage": "npm run test --workspaces --if-present -- --coverage",
+    "lint": "npm run lint --workspaces --if-present",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down -v",
+    "docker:logs": "docker compose logs -f",
+    "k8s:deploy": "kubectl apply -f kubernetes/configmaps/ -f kubernetes/services/ -f kubernetes/deployments/",
+    "k8s:delete": "kubectl delete -f kubernetes/deployments/ -f kubernetes/services/ -f kubernetes/configmaps/"
+  },
+  "keywords": [
+    "microservices",
+    "enterprise",
+    "api-gateway",
+    "docker",
+    "kubernetes",
+    "react",
+    "typescript",
+    "jwt",
+    "rbac",
+    "ecommerce"
+  ]
+}
