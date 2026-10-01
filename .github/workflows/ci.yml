@@ -1,0 +1,59 @@
+name: Enterprise CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-services:
+    name: Test Microservices Matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [api-gateway, auth-service, user-service, product-service, order-service]
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install Dependencies (${{ matrix.service }})
+        working-directory: ./services/${{ matrix.service }}
+        run: npm ci
+
+      - name: Compile TypeScript (${{ matrix.service }})
+        working-directory: ./services/${{ matrix.service }}
+        run: npm run build
+
+      - name: Run Test Suite with Coverage
+        working-directory: ./services/${{ matrix.service }}
+        run: npm test -- --coverage
+
+  test-frontend:
+    name: Test React Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Type Check & Build Production Bundle
+        working-directory: ./frontend
+        run: npm run build
